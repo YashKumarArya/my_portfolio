@@ -79,8 +79,6 @@
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(168,192,255,0.3); }
         .btn-outline { padding: 0.8rem 2rem; background: transparent; color: var(--text); font-weight: 500; font-size: 0.82rem; letter-spacing: 1px; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; text-decoration: none; transition: border-color 0.2s, color 0.2s; }
         .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-        .scroll-hint { position: absolute; bottom: 2rem; right: 4rem; font-family: 'Space Mono', monospace; font-size: 0.68rem; color: var(--muted); letter-spacing: 2px; writing-mode: vertical-rl; opacity: 0; animation: fadeUp 0.8s 1.4s forwards; display: flex; align-items: center; gap: 0.5rem; }
-        .scroll-hint::before { content: ''; display: block; width: 1px; height: 36px; background: linear-gradient(to bottom, transparent, var(--muted)); }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         /* Transparent sections (starship visible behind) */
@@ -232,7 +230,6 @@
             <a href="#experience" class="btn-primary">View Work</a>
             <a href="#contact" class="btn-outline">Get in Touch</a>
         </div>
-        <div class="scroll-hint">scroll</div>
     </section>
 
     <!-- ABOUT -->
@@ -464,6 +461,70 @@
         renderer.shadowMap.type    = THREE.PCFSoftShadowMap;
         document.getElementById('canvas-container').appendChild(renderer.domElement);
 
+        // ── Galaxy Background ──
+        // Layer 1: Dense core stars (small, white/blue)
+        const coreStarCount = 2000;
+        const coreGeo = new THREE.BufferGeometry();
+        const corePos = new Float32Array(coreStarCount * 3);
+        const coreColors = new Float32Array(coreStarCount * 3);
+        for (let i = 0; i < coreStarCount; i++) {
+            // Spiral galaxy distribution
+            const angle = Math.random() * Math.PI * 2;
+            const radius = Math.random() * 60 + 5;
+            const spiralOffset = angle + radius * 0.03;
+            corePos[i * 3]     = Math.cos(spiralOffset) * radius + (Math.random() - 0.5) * 15;
+            corePos[i * 3 + 1] = (Math.random() - 0.5) * 40;
+            corePos[i * 3 + 2] = Math.sin(spiralOffset) * radius + (Math.random() - 0.5) * 15 - 20;
+            // Color variation: white, blue-white, warm white
+            const colorChoice = Math.random();
+            if (colorChoice < 0.4) { coreColors[i*3]=0.85; coreColors[i*3+1]=0.9; coreColors[i*3+2]=1.0; } // blue-white
+            else if (colorChoice < 0.7) { coreColors[i*3]=1.0; coreColors[i*3+1]=0.95; coreColors[i*3+2]=0.8; } // warm white
+            else if (colorChoice < 0.85) { coreColors[i*3]=0.7; coreColors[i*3+1]=0.8; coreColors[i*3+2]=1.0; } // blue
+            else { coreColors[i*3]=1.0; coreColors[i*3+1]=0.85; coreColors[i*3+2]=0.7; } // orange tint
+        }
+        coreGeo.setAttribute('position', new THREE.BufferAttribute(corePos, 3));
+        coreGeo.setAttribute('color', new THREE.BufferAttribute(coreColors, 3));
+        const coreMat = new THREE.PointsMaterial({
+            size: 0.06,
+            transparent: true,
+            opacity: 0.9,
+            sizeAttenuation: true,
+            vertexColors: true,
+        });
+        const coreStars = new THREE.Points(coreGeo, coreMat);
+        scene.add(coreStars);
+
+        // Layer 2: Bright scattered stars (larger, twinkling)
+        const brightCount = 400;
+        const brightGeo = new THREE.BufferGeometry();
+        const brightPos = new Float32Array(brightCount * 3);
+        const brightColors = new Float32Array(brightCount * 3);
+        for (let i = 0; i < brightCount; i++) {
+            brightPos[i * 3]     = (Math.random() - 0.5) * 120;
+            brightPos[i * 3 + 1] = (Math.random() - 0.5) * 80;
+            brightPos[i * 3 + 2] = (Math.random() - 0.5) * 120 - 10;
+            const c = Math.random();
+            if (c < 0.3) { brightColors[i*3]=0.6; brightColors[i*3+1]=0.7; brightColors[i*3+2]=1.0; }
+            else if (c < 0.5) { brightColors[i*3]=1.0; brightColors[i*3+1]=0.8; brightColors[i*3+2]=0.5; }
+            else { brightColors[i*3]=1.0; brightColors[i*3+1]=1.0; brightColors[i*3+2]=1.0; }
+        }
+        brightGeo.setAttribute('position', new THREE.BufferAttribute(brightPos, 3));
+        brightGeo.setAttribute('color', new THREE.BufferAttribute(brightColors, 3));
+        const brightMat = new THREE.PointsMaterial({
+            size: 0.15,
+            transparent: true,
+            opacity: 0.95,
+            sizeAttenuation: true,
+            vertexColors: true,
+        });
+        const brightStars = new THREE.Points(brightGeo, brightMat);
+        scene.add(brightStars);
+
+        // Galaxy group for slow rotation
+        const galaxyGroup = new THREE.Group();
+        galaxyGroup.add(coreStars, brightStars);
+        scene.add(galaxyGroup);
+
         // ── Lighting ──
         // Ambient: soft global fill
         scene.add(new THREE.AmbientLight(0xffffff, 0.6));
@@ -506,7 +567,7 @@
         starshipLight.position.set(1.8, 2.2, -0.5);
         scene.add(starshipLight);
 
-        camera.position.set(0, 1.4, 3.5);
+        camera.position.set(0, 1.4, 2.8); // Zoomed in closer (was 3.5)
 
         let silverSoldier = null, starship = null, soldierMixer = null;
         const clock = new THREE.Clock();
@@ -575,7 +636,7 @@
 
             // Starship: automatic looping left → right pass, repeating forever
             const isMobile = window.innerWidth <= 768;
-            const duration = isMobile ? 20 : 16; // Slower on both desktop and mobile
+            const duration = isMobile ? 24 : 20; // Even slower on both devices
             
             gsap.fromTo(starship.position,
                 { x: -14 },
@@ -584,7 +645,7 @@
                     duration: duration,
                     ease: 'none',
                     repeat: -1,
-                    repeatDelay: 1.5
+                    repeatDelay: 0.5  // Reduced gap between passes
                 }
             );
 
@@ -602,7 +663,16 @@
             requestAnimationFrame(animate);
             if (animationPaused) return;
             const delta = clock.getDelta();
+            const elapsed = clock.getElapsedTime();
             if (soldierMixer) soldierMixer.update(delta);
+
+            // Slow galaxy rotation
+            galaxyGroup.rotation.y = elapsed * 0.008;
+            galaxyGroup.rotation.x = Math.sin(elapsed * 0.003) * 0.02;
+
+            // Twinkle bright stars
+            brightMat.opacity = 0.7 + Math.sin(elapsed * 1.5) * 0.25;
+
             renderer.render(scene, camera);
         }
         animate();
