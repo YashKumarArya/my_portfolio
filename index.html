@@ -139,6 +139,55 @@
         .project-stack { display: flex; flex-wrap: wrap; gap: 0.4rem; }
         .stack-tag { font-family: 'Space Mono', monospace; font-size: 0.66rem; padding: 0.2rem 0.6rem; background: rgba(168,192,255,0.07); border: 1px solid rgba(168,192,255,0.18); border-radius: 4px; color: var(--accent); }
 
+        /* Sketches */
+        #sketches { padding: 4rem 4rem; }
+        .sketches-inner { max-width: 1200px; margin: 0 auto; }
+        .sketches-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .sketch-item { position: relative; }
+        .sketch-frame { 
+            position: relative; 
+            background: var(--bg3); 
+            border: 1px solid var(--border); 
+            border-radius: 16px; 
+            padding: 1.5rem; 
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        .sketch-frame:hover { 
+            border-color: rgba(168,192,255,0.4); 
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(168,192,255,0.15);
+        }
+        .sketch-frame img { 
+            width: 100%; 
+            height: 280px; 
+            object-fit: cover; 
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+        .sketch-overlay {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            right: 1.5rem;
+            bottom: 1.5rem;
+            background: rgba(0,0,0,0.8);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .sketch-frame:hover .sketch-overlay { opacity: 1; }
+        .sketch-frame:hover img { transform: scale(1.05); }
+        .sketch-zoom { 
+            font-size: 2rem; 
+            color: var(--accent);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+        }
+
         /* Contact */
         #contact { padding: 4rem 2rem; }
         .contact-inner { max-width: 800px; margin: 0 auto; padding: 0 2rem; }
@@ -186,7 +235,8 @@
             }
             #hero { padding: 0 1.5rem 4rem; }
             .about-grid { grid-template-columns: 1fr; gap: 2rem; }
-            #about, #skills, #experience, #projects, #contact { padding: 3rem 1.5rem; }
+            #about, #skills, #experience, #projects, #sketches, #contact { padding: 3rem 1.5rem; }
+            .sketches-gallery { grid-template-columns: 1fr; gap: 1.5rem; }
             .contact-grid { grid-template-columns: 1fr; }
             .showcase-sticky { padding: 0 1.5rem; }
             footer { flex-direction: column; gap: 0.5rem; padding: 1.5rem; }
@@ -212,6 +262,7 @@
             <li><a href="#skills">Skills</a></li>
             <li><a href="#experience">Experience</a></li>
             <li><a href="#projects">Projects</a></li>
+            <li><a href="#sketches">Sketches</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
         <button class="mobile-menu-toggle" aria-label="Toggle menu">
@@ -395,11 +446,55 @@
         </div>
     </section>
 
+    <!-- SKETCHES -->
+    <section id="sketches" class="glass-section">
+        <div class="sketches-inner">
+            <div class="section-header">
+                <p class="section-label">05 — Art</p>
+                <h2 class="section-title">Creative Sketches</h2>
+            </div>
+            <div class="sketches-gallery">
+                <div class="sketch-item">
+                    <div class="sketch-frame">
+                        <img src="IMG_2980.PNG" alt="Creative Sketch 1" loading="lazy">
+                        <div class="sketch-overlay">
+                            <div class="sketch-zoom">🔍</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sketch-item">
+                    <div class="sketch-frame">
+                        <img src="IMG_2981.PNG" alt="Creative Sketch 2" loading="lazy">
+                        <div class="sketch-overlay">
+                            <div class="sketch-zoom">🔍</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sketch-item">
+                    <div class="sketch-frame">
+                        <img src="IMG_2982.PNG" alt="Creative Sketch 3" loading="lazy">
+                        <div class="sketch-overlay">
+                            <div class="sketch-zoom">🔍</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sketch-item">
+                    <div class="sketch-frame">
+                        <img src="IMG_2983.PNG" alt="Creative Sketch 4" loading="lazy">
+                        <div class="sketch-overlay">
+                            <div class="sketch-zoom">🔍</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- CONTACT -->
     <section id="contact" class="glass-section">
         <div class="contact-inner">
             <div class="section-header">
-                <p class="section-label">05 — Contact</p>
+                <p class="section-label">06 — Contact</p>
                 <h2 class="section-title">Let's Connect</h2>
             </div>
             <p style="color:var(--muted);font-size:0.95rem;line-height:1.7;margin-top:-2rem;">Open to new opportunities, collaborations, and interesting conversations.</p>
@@ -634,28 +729,55 @@
                 }
             });
 
-            // Starship: automatic looping left → right pass, repeating forever
+            // Starship: left→right, then in→out sequence, repeating forever
             const isMobile = window.innerWidth <= 768;
-            const duration = isMobile ? 24 : 20; // Even slower on both devices
+            const duration = isMobile ? 30 : 25; // Even slower on both devices
             
-            gsap.fromTo(starship.position,
-                { x: -14 },
-                {
-                    x: 14,
-                    duration: duration,
-                    ease: 'none',
-                    repeat: -1,
-                    repeatDelay: 0.5  // Reduced gap between passes
-                }
-            );
+            function createStarshipSequence() {
+                const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.5 });
+                
+                // Phase 1: Move left to right with initial 30-degree rotation
+                tl.fromTo(starship.position, 
+                    { x: -6, y: 0.5, z: -1 },
+                    { x: 5, duration: duration * 0.6, ease: 'none' }
+                );
+                tl.fromTo(starship.rotation,
+                    { y: -Math.PI },
+                    { y: -Math.PI * (5/6), duration: duration * 0.3, ease: 'none' }, // 30 degrees rotation
+                    "<" // Start rotation at same time as left-to-right movement
+                );
+                
+                // Phase 2: Complete rotation and start curved banking turn (when 30° rotated)
+                tl.to(starship.rotation, 
+                    { y: -Math.PI/2, duration: duration * 0.5, ease: 'power2.out' }
+                );
+                tl.to(starship.position, 
+                    { 
+                        x: 3, // Curve slightly left during the turn
+                        y: 1.2, // Arc upward during the banking maneuver
+                        z: -25, 
+                        duration: duration * 0.6, 
+                        ease: 'power2.inOut' 
+                    }, 
+                    "<" // Start curved movement exactly when rotation phase 2 begins
+                );
+                
+                // Phase 3: Reset position and rotation off-screen for next cycle
+                tl.set(starship.position, { x: -6, z: -1 });
+                tl.set(starship.rotation, { y: -Math.PI }); // Reset to face right
+                
+                return tl;
+            }
+            
+            createStarshipSequence();
 
             // Gentle floating bob
-            gsap.to(starship.position, { y: 0.4, duration: 2.4, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+            gsap.to(starship.position, { y: 0.5, duration: 2.4, ease: 'sine.inOut', yoyo: true, repeat: -1 });
 
             // Show starship when 30% scroll is done
             new IntersectionObserver((entries) => {
                 starship.visible = !entries[0].isIntersecting;
-            }, { threshold: 0.7 }).observe(document.getElementById('hero')); // 0.7 means starship shows when 30% scrolled
+            }, { threshold: 0.6 }).observe(document.getElementById('hero')); // 0.7 means starship shows when 30% scrolled
         }
 
         let animationPaused = false;
@@ -730,6 +852,64 @@
                 }
             });
         }
+
+        // Sketch gallery functionality
+        const sketchOverlays = document.querySelectorAll('.sketch-overlay');
+        
+        sketchOverlays.forEach(overlay => {
+            overlay.addEventListener('click', () => {
+                const img = overlay.parentElement.querySelector('img');
+                if (img) {
+                    // Create full-screen view
+                    const fullscreen = document.createElement('div');
+                    fullscreen.style.cssText = `
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100vh;
+                        background: rgba(0,0,0,0.95);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 10000;
+                        cursor: pointer;
+                        backdrop-filter: blur(10px);
+                    `;
+                    
+                    const fullImg = document.createElement('img');
+                    fullImg.src = img.src;
+                    fullImg.alt = img.alt;
+                    fullImg.style.cssText = `
+                        max-width: 90%;
+                        max-height: 90%;
+                        object-fit: contain;
+                        border-radius: 12px;
+                        box-shadow: 0 20px 60px rgba(168,192,255,0.3);
+                        animation: zoomIn 0.3s ease-out;
+                    `;
+                    
+                    // Add animation keyframes
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        @keyframes zoomIn {
+                            from { opacity: 0; transform: scale(0.8); }
+                            to { opacity: 1; transform: scale(1); }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                    
+                    fullscreen.appendChild(fullImg);
+                    document.body.appendChild(fullscreen);
+                    
+                    // Close on click
+                    fullscreen.addEventListener('click', () => {
+                        document.body.removeChild(fullscreen);
+                        document.head.removeChild(style);
+                    });
+                }
+            });
+        });
     </script>
 </body>
 </html>
