@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yash Kumar Arya — Full Stack Engineer</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' blob:;">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #a8c0ff;
+            --bg: #000000;
+            --bg2: #050505;
+            --bg3: #0a0a0a;
+            --text: #e8e8f0;
+            --muted: #6060a0;
+            --border: rgba(168, 192, 255, 0.12);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+        #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: 1; pointer-events: none; }
+
+        /* Loading */
+        #loading { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; z-index: 9999; transition: opacity 0.6s; }
+        #loading.hidden { opacity: 0; pointer-events: none; }
+        #loading span { font-family: 'Space Mono', monospace; font-size: 0.82rem; color: var(--muted); letter-spacing: 2px; }
+        .loader { width: 42px; height: 42px; border: 2px solid #1a1a2e; border-top-color: var(--accent); border-radius: 50%; animation: spin 0.9s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Nav */
+        nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 1.2rem 3rem; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to bottom, rgba(0,0,0,0.95), transparent); backdrop-filter: blur(8px); }
+        .nav-logo { font-family: 'Space Mono', monospace; font-size: 1rem; font-weight: 700; color: var(--accent); text-decoration: none; letter-spacing: 1px; }
+        .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+        .nav-links a { font-size: 0.8rem; font-weight: 500; color: var(--muted); text-decoration: none; letter-spacing: 1.5px; text-transform: uppercase; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--text); }
+
+        /* Hero */
+        #hero { position: relative; height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 4rem 6rem; z-index: 2; }
+        .hero-tag { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--accent); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1rem; opacity: 0; animation: fadeUp 0.8s 0.4s forwards; }
+        .hero-name { font-size: clamp(3rem, 8vw, 7rem); font-weight: 900; line-height: 0.95; letter-spacing: -2px; background: linear-gradient(135deg, #fff 0%, #a8c0ff 50%, #c0c0c0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; opacity: 0; animation: fadeUp 0.8s 0.6s forwards; max-width: 900px; }
+        .hero-subtitle { font-size: clamp(0.9rem, 2vw, 1.2rem); font-weight: 300; color: var(--muted); letter-spacing: 4px; text-transform: uppercase; margin-top: 1rem; opacity: 0; animation: fadeUp 0.8s 0.8s forwards; }
+        .hero-cta { display: flex; gap: 1.2rem; margin-top: 2.5rem; opacity: 0; animation: fadeUp 0.8s 1.0s forwards; }
+        .btn-primary { padding: 0.8rem 2rem; background: var(--accent); color: #08080f; font-weight: 700; font-size: 0.82rem; letter-spacing: 1px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(168,192,255,0.3); }
+        .btn-outline { padding: 0.8rem 2rem; background: transparent; color: var(--text); font-weight: 500; font-size: 0.82rem; letter-spacing: 1px; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; text-decoration: none; transition: border-color 0.2s, color 0.2s; }
+        .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+        .scroll-hint { position: absolute; bottom: 2rem; right: 4rem; font-family: 'Space Mono', monospace; font-size: 0.68rem; color: var(--muted); letter-spacing: 2px; writing-mode: vertical-rl; opacity: 0; animation: fadeUp 0.8s 1.4s forwards; display: flex; align-items: center; gap: 0.5rem; }
+        .scroll-hint::before { content: ''; display: block; width: 1px; height: 36px; background: linear-gradient(to bottom, transparent, var(--muted)); }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Transparent sections (starship visible behind) */
+        .glass-section { position: relative; z-index: 10; background: transparent; }
+
+        /* Section header */
+        .section-header { margin-bottom: 4rem; }
+        .section-label { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--accent); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 0.5rem; }
+        .section-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; letter-spacing: -1px; }
+
+        /* About */
+        #about { padding: 4rem 4rem; }
+        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; max-width: 1200px; margin: 0 auto; }
+        .about-text p { font-size: 1rem; line-height: 1.9; color: #7878b0; margin-bottom: 1.5rem; }
+        .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+        .stat-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; padding: 1.6rem; }
+        .stat-number { font-size: 2.2rem; font-weight: 900; color: var(--accent); line-height: 1; }
+        .stat-label { font-size: 0.72rem; color: var(--muted); margin-top: 0.4rem; letter-spacing: 1px; text-transform: uppercase; }
+
+        /* Skills */
+        #skills { padding: 4rem 4rem; }
+        .skills-inner { max-width: 1200px; margin: 0 auto; }
+        .skill-category { margin-bottom: 2.5rem; }
+        .skill-cat-title { font-size: 0.72rem; font-weight: 600; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.8rem; }
+        .skill-tags { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+        .tag { padding: 0.4rem 1rem; background: var(--bg3); border: 1px solid var(--border); border-radius: 100px; font-size: 0.8rem; color: var(--text); transition: border-color 0.2s, color 0.2s; }
+        .tag:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* Experience */
+        #experience { padding: 5rem 4rem; }
+        .exp-inner { max-width: 900px; margin: 0 auto; }
+        .exp-item { position: relative; padding-left: 2.5rem; padding-bottom: 3.5rem; border-left: 1px solid var(--border); }
+        .exp-item:last-child { border-left-color: transparent; padding-bottom: 0; }
+        .exp-dot { position: absolute; left: -5px; top: 4px; width: 9px; height: 9px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 12px rgba(168,192,255,0.5); }
+        .exp-meta { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.3rem; flex-wrap: wrap; gap: 0.5rem; }
+        .exp-company { font-size: 1.15rem; font-weight: 700; }
+        .exp-date { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--muted); letter-spacing: 1px; padding: 0.25rem 0.7rem; background: var(--bg3); border-radius: 4px; border: 1px solid var(--border); }
+        .exp-role { font-size: 0.82rem; color: var(--accent); font-weight: 500; letter-spacing: 1px; margin-bottom: 1.2rem; }
+        .exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.55rem; }
+        .exp-bullets li { font-size: 0.855rem; line-height: 1.7; color: #6868a0; padding-left: 1.2rem; position: relative; }
+        .exp-bullets li::before { content: '→'; position: absolute; left: 0; color: var(--accent); opacity: 0.55; }
+
+        /* Showcase (starship section) */
+        #showcase { position: relative; height: 100vh; z-index: 2; background: transparent; padding: 4rem 0; }
+        .showcase-sticky { height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 0 4rem; }
+        .showcase-label { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--accent); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 0.8rem; }
+        .showcase-heading { font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 900; letter-spacing: -1.5px; background: linear-gradient(135deg, #fff, #a8c0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
+
+        /* Projects */
+        #projects { padding: 4rem 4rem; }
+        .projects-inner { max-width: 1200px; margin: 0 auto; }
+        .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.4rem; }
+        .project-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; transition: border-color 0.2s, transform 0.25s; }
+        .project-card:hover { border-color: rgba(168,192,255,0.35); transform: translateY(-4px); }
+        .project-icon { font-size: 1.7rem; margin-bottom: 1.1rem; }
+        .project-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .project-desc { font-size: 0.84rem; line-height: 1.7; color: var(--muted); margin-bottom: 1.2rem; }
+        .project-stack { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+        .stack-tag { font-family: 'Space Mono', monospace; font-size: 0.66rem; padding: 0.2rem 0.6rem; background: rgba(168,192,255,0.07); border: 1px solid rgba(168,192,255,0.18); border-radius: 4px; color: var(--accent); }
+
+        /* Contact */
+        #contact { padding: 4rem 2rem; }
+        .contact-inner { max-width: 800px; margin: 0 auto; padding: 0 2rem; }
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 3rem; }
+        .contact-item { display: flex; align-items: center; gap: 1.2rem; padding: 1.4rem; background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; transition: border-color 0.2s; }
+        .contact-item:hover { border-color: var(--accent); }
+        .contact-icon { font-size: 1.2rem; width: 2.4rem; height: 2.4rem; display: flex; align-items: center; justify-content: center; background: rgba(168,192,255,0.07); border-radius: 8px; flex-shrink: 0; }
+        .contact-label { font-size: 0.68rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.2rem; }
+        .contact-value { font-size: 0.86rem; color: var(--text); font-weight: 500; }
+
+        /* Footer */
+        footer { position: relative; z-index: 10; background: transparent; padding: 2rem 4rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); }
+        footer p { font-size: 0.75rem; color: var(--muted); font-family: 'Space Mono', monospace; }
+
+        /* Responsive */
+        @media (max-width: 1100px) {
+            .about-grid { gap: 3rem; }
+        }
+        @media (max-width: 768px) {
+            nav { padding: 1rem 1.5rem; }
+            .nav-links { display: none; }
+            #hero { padding: 0 1.5rem 4rem; }
+            .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+            #about, #skills, #experience, #projects, #contact { padding: 3rem 1.5rem; }
+            .contact-grid { grid-template-columns: 1fr; }
+            .showcase-sticky { padding: 0 1.5rem; }
+            footer { flex-direction: column; gap: 0.5rem; padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading -->
+    <div id="loading">
+        <div class="loader"></div>
+        <span>Loading assets...</span>
+    </div>
+
+    <!-- 3D Canvas -->
+    <div id="canvas-container"></div>
+
+    <!-- Nav -->
+    <nav>
+        <a href="#hero" class="nav-logo">YKA</a>
+        <ul class="nav-links">
+            <li><a href="#about">About</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#experience">Experience</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section id="hero">
+        <div class="hero-tag">Full Stack Engineer</div>
+        <h1 class="hero-name">Yash Kumar<br>Arya</h1>
+        <p class="hero-subtitle">Backend · React Native · AI Integrations</p>
+        <div class="hero-cta">
+            <a href="#experience" class="btn-primary">View Work</a>
+            <a href="#contact" class="btn-outline">Get in Touch</a>
+        </div>
+        <div class="scroll-hint">scroll</div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="glass-section">
+        <div class="about-grid">
+            <div>
+                <div class="section-header">
+                    <p class="section-label">01 — About</p>
+                    <h2 class="section-title">Who I Am</h2>
+                </div>
+                <div class="about-text">
+                    <p>Backend engineer specialising in real-time, event-driven distributed systems, microservices, and high-throughput data pipelines.</p>
+                    <p>Experienced with Node.js, TypeScript, RabbitMQ, ClickHouse, and Docker. Strong understanding of networking, observability, and scalable schema design.</p>
+                    <p>Complemented by full-stack expertise with React Native, MobX, TanStack Query, and complex clinical workflow orchestration.</p>
+                </div>
+            </div>
+            <div class="about-stats">
+                <div class="stat-card"><div class="stat-number">3+</div><div class="stat-label">Years Experience</div></div>
+                <div class="stat-card"><div class="stat-number">4+</div><div class="stat-label">Projects Shipped</div></div>
+                <div class="stat-card"><div class="stat-number">3</div><div class="stat-label">Companies</div></div>
+                <div class="stat-card"><div class="stat-number">B.Tech</div><div class="stat-label">CSE · ABES 2024</div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" class="glass-section">
+        <div class="skills-inner">
+            <div class="section-header">
+                <p class="section-label">02 — Skills</p>
+                <h2 class="section-title">Technical Stack</h2>
+            </div>
+            <div class="skill-category">
+                <div class="skill-cat-title">Languages</div>
+                <div class="skill-tags">
+                    <span class="tag">Python</span><span class="tag">JavaScript</span><span class="tag">TypeScript</span><span class="tag">FastAPI</span><span class="tag">Django (learning)</span>
+                </div>
+            </div>
+            <div class="skill-category">
+                <div class="skill-cat-title">Frontend & Mobile</div>
+                <div class="skill-tags">
+                    <span class="tag">React</span><span class="tag">React Native</span><span class="tag">Expo</span><span class="tag">HTML / CSS</span><span class="tag">NativeWind</span><span class="tag">TailwindCSS</span><span class="tag">Styled Components</span><span class="tag">Figma</span>
+                </div>
+            </div>
+            <div class="skill-category">
+                <div class="skill-cat-title">Backend & APIs</div>
+                <div class="skill-tags">
+                    <span class="tag">Node.js</span><span class="tag">REST APIs</span><span class="tag">RabbitMQ</span><span class="tag">OpenAI Whisper</span><span class="tag">Mistral</span><span class="tag">OpenRouter</span>
+                </div>
+            </div>
+            <div class="skill-category">
+                <div class="skill-cat-title">Databases</div>
+                <div class="skill-tags">
+                    <span class="tag">ClickHouse (MergeTree / TTL)</span><span class="tag">MySQL</span><span class="tag">MongoDB</span>
+                </div>
+            </div>
+            <div class="skill-category">
+                <div class="skill-cat-title">State Management</div>
+                <div class="skill-tags">
+                    <span class="tag">MobX</span><span class="tag">TanStack Query</span><span class="tag">React Hooks</span><span class="tag">Context API</span>
+                </div>
+            </div>
+            <div class="skill-category">
+                <div class="skill-cat-title">DevOps & Networking</div>
+                <div class="skill-tags">
+                    <span class="tag">Docker</span><span class="tag">Linux Server Management</span><span class="tag">Git / GitHub</span><span class="tag">TCP/IP</span><span class="tag">WebSockets</span><span class="tag">DNS / TLS</span><span class="tag">Azure IoT</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience" class="glass-section">
+        <div class="exp-inner">
+            <div class="section-header">
+                <p class="section-label">03 — Experience</p>
+                <h2 class="section-title">Where I've Worked</h2>
+            </div>
+            <div class="exp-item">
+                <div class="exp-dot"></div>
+                <div class="exp-meta"><div class="exp-company">Alpha3 Agentic</div><div class="exp-date">Aug 2025 – Dec 2025</div></div>
+                <div class="exp-role">Backend Engineer</div>
+                <ul class="exp-bullets">
+                    <li>Built a real-time SOC-grade, event-driven microservice architecture for EDR alert ingestion using Node.js, TypeScript, RabbitMQ, and ClickHouse.</li>
+                    <li>Developed four core microservices — Normalization, Enrichment, Decisioning, and Onboarding — with multi-vendor schema support.</li>
+                    <li>Engineered enrichment pipelines with sliding-window batching, threat-intel integrations, retry logic, and API optimisation.</li>
+                    <li>Operationalised AI/ML inference as a service — integrated FastAPI-based agents with risk scoring and automated routing.</li>
+                    <li>Designed ClickHouse MergeTree schemas with PARTITION BY, ORDER BY, TTL, projections, and JSONEachRow ingestion.</li>
+                    <li>Delivered observability with structured logs, ingestion-lag dashboards, and queue saturation alerts.</li>
+                </ul>
+            </div>
+            <div class="exp-item">
+                <div class="exp-dot"></div>
+                <div class="exp-meta"><div class="exp-company">Medecro.ai</div><div class="exp-date">Dec 2024 – Aug 2025</div></div>
+                <div class="exp-role">Software Development Engineer (SDE) Intern</div>
+                <ul class="exp-bullets">
+                    <li>Built two production-grade React Native apps (patient & doctor) with appointment scheduling, doctor discovery, and AI-assisted diagnostics.</li>
+                    <li>Built multi-stage clinical workflows using MobX and TanStack Query with offline support and consistent state management.</li>
+                    <li>Implemented AI-powered voice-to-text pipelines for automated form population and structured clinical note generation.</li>
+                    <li>Integrated AI-based dental issue detection from CBCT scans into the doctor app for real-time clinical decision support.</li>
+                </ul>
+            </div>
+            <div class="exp-item">
+                <div class="exp-dot"></div>
+                <div class="exp-meta"><div class="exp-company">HCL Technologies</div><div class="exp-date">Jul 2023 – Oct 2023</div></div>
+                <div class="exp-role">Industrial Automation Intern</div>
+                <ul class="exp-bullets">
+                    <li>Designed and deployed digital infrastructure for interconnected PLCs in production environments.</li>
+                    <li>Gained knowledge in Microsoft Azure IoT, Edge Computing, Kepware Servers, and Red Hat OpenShift.</li>
+                    <li>Learned OPC protocols for industrial data exchange and secure telemetry via Azure IoT Edge.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- STARSHIP SHOWCASE -->
+    <section id="showcase">
+        <div class="showcase-sticky">
+            <p class="showcase-label">Into the Unknown</p>
+            <h2 class="showcase-heading">Always<br>Exploring</h2>
+        </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="glass-section">
+        <div class="projects-inner">
+            <div class="section-header">
+                <p class="section-label">04 — Projects</p>
+                <h2 class="section-title">Things I've Built</h2>
+            </div>
+            <div class="projects-grid">
+                <a href="https://shivservices.com" target="_blank" rel="noopener noreferrer" class="project-card" style="text-decoration: none; color: inherit;">
+                    <div class="project-icon">🛡️</div>
+                    <div class="project-name">Shiv Security Services</div>
+                    <div class="project-desc">Professional business website for a security services company in Moradabad. Features service listings, client showcases, career portal, and contact forms.</div>
+                    <div class="project-stack"><span class="stack-tag">HTML</span><span class="stack-tag">CSS</span><span class="stack-tag">JavaScript</span><span class="stack-tag">Responsive Design</span></div>
+                </a>
+                <div class="project-card">
+                    <div class="project-icon">🧠</div>
+                    <div class="project-name">Mental Health Therapist Chatbot</div>
+                    <div class="project-desc">NLP-based chatbot providing mental health support with sentiment analysis to detect emotions and give personalised advice.</div>
+                    <div class="project-stack"><span class="stack-tag">Python</span><span class="stack-tag">TensorFlow</span><span class="stack-tag">Keras</span><span class="stack-tag">NLP</span></div>
+                </div>
+                <div class="project-card">
+                    <div class="project-icon">👁️</div>
+                    <div class="project-name">Driver Drowsiness Detection</div>
+                    <div class="project-desc">Real-time system detecting driver fatigue using EAR/MAR-based predictions and facial landmark detection to enhance road safety.</div>
+                    <div class="project-stack"><span class="stack-tag">Python</span><span class="stack-tag">OpenCV</span><span class="stack-tag">Dlib</span><span class="stack-tag">Computer Vision</span></div>
+                </div>
+                <div class="project-card">
+                    <div class="project-icon">🏠</div>
+                    <div class="project-name">Real Estate Pro</div>
+                    <div class="project-desc">Full-stack mobile realty listing app — browse, add, and manage real estate listings on the go with a sleek cross-platform UI.</div>
+                    <div class="project-stack"><span class="stack-tag">React Native</span><span class="stack-tag">TypeScript</span><span class="stack-tag">Node.js</span><span class="stack-tag">NativeWind</span></div>
+                </div>
+                <div class="project-card">
+                    <div class="project-icon">📚</div>
+                    <div class="project-name">Book Share</div>
+                    <div class="project-desc">Community-driven reading app with keep-alive automation via a 14-min cron ping. Stores books with title, author, thoughts, and timestamps.</div>
+                    <div class="project-stack"><span class="stack-tag">Expo</span><span class="stack-tag">React Native</span><span class="stack-tag">Node.js</span><span class="stack-tag">MongoDB</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="glass-section">
+        <div class="contact-inner">
+            <div class="section-header">
+                <p class="section-label">05 — Contact</p>
+                <h2 class="section-title">Let's Connect</h2>
+            </div>
+            <p style="color:var(--muted);font-size:0.95rem;line-height:1.7;margin-top:-2rem;">Open to new opportunities, collaborations, and interesting conversations.</p>
+            <div class="contact-grid">
+                <a href="tel:+919410472264" class="contact-item">
+                    <div class="contact-icon">📞</div>
+                    <div><div class="contact-label">Phone</div><div class="contact-value">+91 9410472264</div></div>
+                </a>
+                <a href="mailto:yashkmr694@gmail.com" class="contact-item">
+                    <div class="contact-icon">✉️</div>
+                    <div><div class="contact-label">Email</div><div class="contact-value">yashkmr694@gmail.com</div></div>
+                </a>
+                <a href="https://linkedin.com/in/yash-kumar-arya-8073b3267" target="_blank" rel="noopener noreferrer" class="contact-item">
+                    <div class="contact-icon">💼</div>
+                    <div><div class="contact-label">LinkedIn</div><div class="contact-value">yash-kumar-arya-8073b3267</div></div>
+                </a>
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div><div class="contact-label">Location</div><div class="contact-value">Paschim Vihar, New Delhi</div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 Yash Kumar Arya</p>
+        <p>Built with Three.js + GSAP</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" crossorigin="anonymous"></script>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Renderer
+        const scene    = new THREE.Scene();
+        const camera   = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.toneMapping    = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type    = THREE.PCFSoftShadowMap;
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        // ── Lighting ──
+        // Ambient: soft global fill
+        scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+
+        // Key light: primary sun — upper-right-front
+        const keyLight = new THREE.DirectionalLight(0xffffff, 2.5);
+        keyLight.position.set(5, 10, 7);
+        keyLight.castShadow = true;
+        scene.add(keyLight);
+
+        // Fill light: cool blue/purple — left-rear
+        const fillLight = new THREE.DirectionalLight(0x8888ff, 0.8);
+        fillLight.position.set(-5, 3, -5);
+        scene.add(fillLight);
+
+        // Rim light: cyan-blue edge glow — behind models
+        const rimLight = new THREE.PointLight(0xaaddff, 1.5, 20);
+        rimLight.position.set(0, 3, -4);
+        scene.add(rimLight);
+
+        // Silver soldier accent: clean white highlight
+        const accentLight = new THREE.PointLight(0xffffff, 1.5, 12);
+        accentLight.position.set(1.8, 2.2, -0.5);
+        scene.add(accentLight);
+
+        // Dramatic spotlight from right-top corner
+        const spotLight = new THREE.SpotLight(0xffffff, 3, 15, Math.PI / 6, 0.3, 1);
+        spotLight.position.set(4, 5, 2); // Right-top corner position
+        spotLight.target.position.set(0, 0.5, 0); // Target silver soldier area
+        spotLight.castShadow = true;
+        spotLight.shadow.camera.near = 1;
+        spotLight.shadow.camera.far = 15;
+        spotLight.shadow.mapSize.width = 1024;
+        spotLight.shadow.mapSize.height = 1024;
+        scene.add(spotLight);
+        scene.add(spotLight.target);
+
+        // Warm engine glow for silver model
+        const starshipLight = new THREE.PointLight(0xff8844, 2, 8);
+        starshipLight.position.set(1.8, 2.2, -0.5);
+        scene.add(starshipLight);
+
+        camera.position.set(0, 1.4, 3.5);
+
+        let silverSoldier = null, starship = null, soldierMixer = null;
+        const clock = new THREE.Clock();
+        const loader = new GLTFLoader();
+        let loaded = 0;
+
+        loader.load('silver_soldier_animated.glb', (gltf) => {
+            silverSoldier = gltf.scene;
+
+            // Proper bounding-box centering
+            const box    = new THREE.Box3().setFromObject(silverSoldier);
+            const center = box.getCenter(new THREE.Vector3());
+            const size   = box.getSize(new THREE.Vector3());
+            silverSoldier.position.sub(center);
+            silverSoldier.position.y += size.y / 2;
+            silverSoldier.position.y -= size.y * 0.12; // Move 30% higher (was 0.35)
+
+            scene.add(silverSoldier);
+            if (gltf.animations.length) {
+                soldierMixer = new THREE.AnimationMixer(silverSoldier);
+                gltf.animations.forEach(clip => soldierMixer.clipAction(clip).play());
+            }
+            loaded++; tryInit();
+        }, undefined, (err) => {
+            console.error('Failed to load silver_soldier_animated.glb:', err);
+            document.querySelector('#loading span').textContent = 'Error loading soldier model';
+        });
+
+        loader.load('2_starships_fixed_and_broken.glb', (gltf) => {
+            starship = gltf.scene;
+            starship.position.set(-14, 0, 0);
+            starship.rotation.y = -Math.PI;
+            starship.scale.set(1, 1, 1);
+            starship.visible = false;
+            scene.add(starship);
+            loaded++; tryInit();
+        }, undefined, (err) => {
+            console.error('Failed to load 2_starships_fixed_and_broken.glb:', err);
+            document.querySelector('#loading span').textContent = 'Error loading starship model';
+        });
+
+        function tryInit() {
+            if (loaded === 2) {
+                document.getElementById('loading').classList.add('hidden');
+                setupAnimations();
+            }
+        }
+
+        function setupAnimations() {
+            // Silver Soldier exits upward when scrolling into About
+            gsap.to(silverSoldier.position, {
+                y: 6,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '#about',
+                    start: 'top bottom',
+                    end: 'top top',
+                    scrub: 1.5,
+                }
+            });
+
+            // Starship: automatic looping left → right pass, repeating forever
+            gsap.fromTo(starship.position,
+                { x: -14 },
+                {
+                    x: 14,
+                    duration: 12,
+                    ease: 'none',
+                    repeat: -1,
+                    repeatDelay: 1.5
+                }
+            );
+
+            // Gentle floating bob
+            gsap.to(starship.position, { y: 0.4, duration: 2.4, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+
+            // Show starship when 30% scroll is done
+            new IntersectionObserver((entries) => {
+                starship.visible = !entries[0].isIntersecting;
+            }, { threshold: 0.7 }).observe(document.getElementById('hero')); // 0.7 means starship shows when 30% scrolled
+        }
+
+        let animationPaused = false;
+        function animate() {
+            requestAnimationFrame(animate);
+            if (animationPaused) return;
+            const delta = clock.getDelta();
+            if (soldierMixer) soldierMixer.update(delta);
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                animationPaused = true;
+            } else {
+                animationPaused = false;
+                clock.getDelta();
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Nav active highlight
+        const navLinks = document.querySelectorAll('.nav-links a');
+        document.querySelectorAll('section[id]').forEach(s =>
+            new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    navLinks.forEach(a => a.style.color = '');
+                    const link = document.querySelector(`.nav-links a[href="#${s.id}"]`);
+                    if (link) link.style.color = 'var(--text)';
+                }
+            }, { threshold: 0.4 }).observe(s)
+        );
+    </script>
+</body>
+</html>
