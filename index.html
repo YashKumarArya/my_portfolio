@@ -188,6 +188,96 @@
             text-shadow: 0 2px 8px rgba(0,0,0,0.5);
         }
 
+        /* Music */
+        #music { padding: 4rem 4rem; }
+        .music-inner { max-width: 1000px; margin: 0 auto; }
+        .music-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2.5rem; }
+        .video-card { 
+            background: var(--bg3); 
+            border: 1px solid var(--border); 
+            border-radius: 16px; 
+            padding: 1.5rem; 
+            transition: all 0.3s ease;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            cursor: pointer;
+        }
+        .video-card:hover { 
+            border-color: rgba(168,192,255,0.4); 
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(168,192,255,0.15);
+        }
+        .video-frame { 
+            position: relative; 
+            width: 100%; 
+            aspect-ratio: 9/16; /* YouTube Shorts aspect ratio */
+            border-radius: 12px;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--bg), var(--bg3));
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .video-thumbnail {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+        .youtube-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.7;
+        }
+        .play-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        .video-card:hover .play-overlay { opacity: 1; }
+        .play-icon { 
+            font-size: 3rem; 
+            color: var(--accent);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+        }
+        .video-info h3 { 
+            font-size: 1.1rem; 
+            font-weight: 700; 
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+        .video-info p { 
+            font-size: 0.85rem; 
+            color: var(--muted); 
+            line-height: 1.6;
+            margin-bottom: 0.8rem;
+        }
+        .video-link {
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+        .video-card:hover .video-link {
+            opacity: 1;
+        }
+
         /* Contact */
         #contact { padding: 4rem 2rem; }
         .contact-inner { max-width: 800px; margin: 0 auto; padding: 0 2rem; }
@@ -235,11 +325,64 @@
             }
             #hero { padding: 0 1.5rem 4rem; }
             .about-grid { grid-template-columns: 1fr; gap: 2rem; }
-            #about, #skills, #experience, #projects, #sketches, #contact { padding: 3rem 1.5rem; }
-            .sketches-gallery { grid-template-columns: 1fr; gap: 1.5rem; }
+            #about, #skills, #experience, #projects, #sketches, #music, #contact { padding: 3rem 1.5rem; }
+            .sketches-gallery { 
+                grid-template-columns: 1fr; 
+                gap: 1.5rem; 
+            }
+            .sketch-frame img { 
+                height: 240px; /* Slightly smaller on mobile */
+            }
+            .music-gallery { 
+                grid-template-columns: 1fr; 
+                gap: 2rem; 
+            }
+            .video-card {
+                max-width: 100%;
+            }
+            .video-frame {
+                aspect-ratio: 9/16; /* Maintain Shorts aspect ratio */
+                max-height: 400px; /* Prevent videos from being too tall on mobile */
+            }
+            .youtube-icon {
+                font-size: 3rem; /* Slightly smaller on mobile */
+            }
+            .play-icon {
+                font-size: 2.5rem; /* Adjust play icon size */
+            }
+            .video-info h3 {
+                font-size: 1rem;
+            }
+            .video-info p {
+                font-size: 0.8rem;
+            }
             .contact-grid { grid-template-columns: 1fr; }
             .showcase-sticky { padding: 0 1.5rem; }
             footer { flex-direction: column; gap: 0.5rem; padding: 1.5rem; }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 480px) {
+            .music-gallery {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .video-card {
+                padding: 1rem;
+            }
+            .video-frame {
+                aspect-ratio: 9/16;
+                max-height: 320px;
+            }
+            .sketch-frame {
+                padding: 1rem;
+            }
+            .sketch-frame img {
+                height: 200px;
+            }
+            .hero-name {
+                font-size: 2.5rem;
+            }
         }
     </style>
 </head>
@@ -263,6 +406,7 @@
             <li><a href="#experience">Experience</a></li>
             <li><a href="#projects">Projects</a></li>
             <li><a href="#sketches">Sketches</a></li>
+            <li><a href="#music">Music</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
         <button class="mobile-menu-toggle" aria-label="Toggle menu">
@@ -490,11 +634,53 @@
         </div>
     </section>
 
+    <!-- MUSIC -->
+    <section id="music" class="glass-section">
+        <div class="music-inner">
+            <div class="section-header">
+                <p class="section-label">06 — Music</p>
+                <h2 class="section-title">Guitar & Vocals</h2>
+            </div>
+            <div class="music-gallery">
+                <a href="https://www.youtube.com/shorts/2uPPZIZFm00" target="_blank" rel="noopener noreferrer" class="video-card">
+                    <div class="video-frame">
+                        <div class="video-thumbnail">
+                            <div class="youtube-icon">📺</div>
+                            <div class="play-overlay">
+                                <div class="play-icon">▶</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <h3>"I Wanna Be Yours" Cover</h3>
+                        <p>Arctic Monkeys guitar cover showcasing fingerstyle technique</p>
+                        <span class="video-link">Watch on YouTube →</span>
+                    </div>
+                </a>
+                <a href="https://www.youtube.com/shorts/UO0Sh91Iur8" target="_blank" rel="noopener noreferrer" class="video-card">
+                    <div class="video-frame">
+                        <div class="video-thumbnail">
+                            <div class="youtube-icon">📺</div>
+                            <div class="play-overlay">
+                                <div class="play-icon">▶</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <h3>"Jeele Jara" Cover</h3>
+                        <p>Guitar and vocal performance with soulful expression</p>
+                        <span class="video-link">Watch on YouTube →</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
     <!-- CONTACT -->
     <section id="contact" class="glass-section">
         <div class="contact-inner">
             <div class="section-header">
-                <p class="section-label">06 — Contact</p>
+                <p class="section-label">07 — Contact</p>
                 <h2 class="section-title">Let's Connect</h2>
             </div>
             <p style="color:var(--muted);font-size:0.95rem;line-height:1.7;margin-top:-2rem;">Open to new opportunities, collaborations, and interesting conversations.</p>
@@ -736,10 +922,13 @@
             function createStarshipSequence() {
                 const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.5 });
                 
+                // Adjust movement range for mobile
+                const rightPosition = isMobile ? 3 : 5; // Less extreme movement on mobile
+                
                 // Phase 1: Move left to right with initial 30-degree rotation
                 tl.fromTo(starship.position, 
                     { x: -6, y: 0.5, z: -1 },
-                    { x: 5, duration: duration * 0.6, ease: 'none' }
+                    { x: rightPosition, duration: duration * 0.6, ease: 'none' }
                 );
                 tl.fromTo(starship.rotation,
                     { y: -Math.PI },
@@ -753,7 +942,7 @@
                 );
                 tl.to(starship.position, 
                     { 
-                        x: 3, // Curve slightly left during the turn
+                        x: isMobile ? 2 : 3, // Less curve on mobile
                         y: 1.2, // Arc upward during the banking maneuver
                         z: -25, 
                         duration: duration * 0.6, 
