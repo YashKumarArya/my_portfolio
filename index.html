@@ -634,28 +634,55 @@
                 }
             });
 
-            // Starship: automatic looping left → right pass, repeating forever
+            // Starship: left→right, then in→out sequence, repeating forever
             const isMobile = window.innerWidth <= 768;
-            const duration = isMobile ? 24 : 20; // Even slower on both devices
+            const duration = isMobile ? 30 : 25; // Even slower on both devices
             
-            gsap.fromTo(starship.position,
-                { x: -14 },
-                {
-                    x: 14,
-                    duration: duration,
-                    ease: 'none',
-                    repeat: -1,
-                    repeatDelay: 0.5  // Reduced gap between passes
-                }
-            );
+            function createStarshipSequence() {
+                const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.5 });
+                
+                // Phase 1: Move left to right with initial 30-degree rotation
+                tl.fromTo(starship.position, 
+                    { x: -6, y: 0.5, z: -1 },
+                    { x: 5, duration: duration * 0.6, ease: 'none' }
+                );
+                tl.fromTo(starship.rotation,
+                    { y: -Math.PI },
+                    { y: -Math.PI * (5/6), duration: duration * 0.3, ease: 'none' }, // 30 degrees rotation
+                    "<" // Start rotation at same time as left-to-right movement
+                );
+                
+                // Phase 2: Complete rotation and start curved banking turn (when 30° rotated)
+                tl.to(starship.rotation, 
+                    { y: -Math.PI/2, duration: duration * 0.5, ease: 'power2.out' }
+                );
+                tl.to(starship.position, 
+                    { 
+                        x: 3, // Curve slightly left during the turn
+                        y: 1.2, // Arc upward during the banking maneuver
+                        z: -25, 
+                        duration: duration * 0.6, 
+                        ease: 'power2.inOut' 
+                    }, 
+                    "<" // Start curved movement exactly when rotation phase 2 begins
+                );
+                
+                // Phase 3: Reset position and rotation off-screen for next cycle
+                tl.set(starship.position, { x: -6, z: -1 });
+                tl.set(starship.rotation, { y: -Math.PI }); // Reset to face right
+                
+                return tl;
+            }
+            
+            createStarshipSequence();
 
             // Gentle floating bob
-            gsap.to(starship.position, { y: 0.4, duration: 2.4, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+            gsap.to(starship.position, { y: 0.5, duration: 2.4, ease: 'sine.inOut', yoyo: true, repeat: -1 });
 
             // Show starship when 30% scroll is done
             new IntersectionObserver((entries) => {
                 starship.visible = !entries[0].isIntersecting;
-            }, { threshold: 0.7 }).observe(document.getElementById('hero')); // 0.7 means starship shows when 30% scrolled
+            }, { threshold: 0.6 }).observe(document.getElementById('hero')); // 0.7 means starship shows when 30% scrolled
         }
 
         let animationPaused = false;
