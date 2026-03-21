@@ -107,6 +107,48 @@
         .tag { padding: 0.4rem 1rem; background: var(--bg3); border: 1px solid var(--border); border-radius: 100px; font-size: 0.8rem; color: var(--text); transition: border-color 0.2s, color 0.2s; }
         .tag:hover { border-color: var(--accent); color: var(--accent); }
 
+        /* Featured Project */
+        #featured-project { padding: 5rem 4rem; }
+        .featured-inner { max-width: 1000px; margin: 0 auto; }
+        .featured-content { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+        .featured-problem, .featured-solution, .featured-tech, .featured-result { 
+            background: var(--bg3); 
+            border: 1px solid var(--border); 
+            border-radius: 12px; 
+            padding: 2rem;
+            transition: border-color 0.2s;
+        }
+        .featured-problem:hover, .featured-solution:hover, .featured-tech:hover, .featured-result:hover { 
+            border-color: rgba(168,192,255,0.3); 
+        }
+        .featured-content h3 { 
+            font-size: 1.1rem; 
+            font-weight: 700; 
+            color: var(--accent); 
+            margin-bottom: 1rem; 
+            letter-spacing: 0.5px;
+        }
+        .featured-content p { 
+            font-size: 0.9rem; 
+            line-height: 1.7; 
+            color: var(--muted); 
+        }
+        .tech-grid { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 0.5rem; 
+            margin-top: 1rem;
+        }
+        .tech-tag { 
+            font-family: 'Space Mono', monospace; 
+            font-size: 0.75rem; 
+            padding: 0.4rem 0.8rem; 
+            background: rgba(168,192,255,0.1); 
+            border: 1px solid rgba(168,192,255,0.25); 
+            border-radius: 6px; 
+            color: var(--accent);
+        }
+
         /* Experience */
         #experience { padding: 5rem 4rem; }
         .exp-inner { max-width: 900px; margin: 0 auto; }
@@ -134,8 +176,20 @@
         .project-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; transition: border-color 0.2s, transform 0.25s; }
         .project-card:hover { border-color: rgba(168,192,255,0.35); transform: translateY(-4px); }
         .project-icon { font-size: 1.7rem; margin-bottom: 1.1rem; }
-        .project-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
-        .project-desc { font-size: 0.84rem; line-height: 1.7; color: var(--muted); margin-bottom: 1.2rem; }
+        .project-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.8rem; }
+        .project-problem { 
+            font-size: 0.8rem; 
+            line-height: 1.6; 
+            color: var(--muted); 
+            margin-bottom: 0.8rem; 
+            font-style: italic;
+        }
+        .project-solution { 
+            font-size: 0.84rem; 
+            line-height: 1.7; 
+            color: var(--text); 
+            margin-bottom: 1.2rem; 
+        }
         .project-stack { display: flex; flex-wrap: wrap; gap: 0.4rem; }
         .stack-tag { font-family: 'Space Mono', monospace; font-size: 0.66rem; padding: 0.2rem 0.6rem; background: rgba(168,192,255,0.07); border: 1px solid rgba(168,192,255,0.18); border-radius: 4px; color: var(--accent); }
 
@@ -212,7 +266,7 @@
         .video-frame { 
             position: relative; 
             width: 100%; 
-            aspect-ratio: 9/16; /* YouTube Shorts aspect ratio */
+            aspect-ratio: 9/8; /* Reduced height by 50% */
             border-radius: 12px;
             overflow: hidden;
             background: linear-gradient(135deg, var(--bg), var(--bg3));
@@ -325,7 +379,8 @@
             }
             #hero { padding: 0 1.5rem 4rem; }
             .about-grid { grid-template-columns: 1fr; gap: 2rem; }
-            #about, #skills, #experience, #projects, #sketches, #music, #contact { padding: 3rem 1.5rem; }
+            #about, #skills, #experience, #featured-project, #projects, #sketches, #music, #contact { padding: 3rem 1.5rem; }
+            .featured-content { grid-template-columns: 1fr; gap: 1.5rem; }
             .sketches-gallery { 
                 grid-template-columns: 1fr; 
                 gap: 1.5rem; 
@@ -341,8 +396,8 @@
                 max-width: 100%;
             }
             .video-frame {
-                aspect-ratio: 9/16; /* Maintain Shorts aspect ratio */
-                max-height: 400px; /* Prevent videos from being too tall on mobile */
+                aspect-ratio: 9/8; /* Reduced height by 50% */
+                max-height: 200px; /* Prevent videos from being too tall on mobile */
             }
             .youtube-icon {
                 font-size: 3rem; /* Slightly smaller on mobile */
@@ -371,8 +426,8 @@
                 padding: 1rem;
             }
             .video-frame {
-                aspect-ratio: 9/16;
-                max-height: 320px;
+                aspect-ratio: 9/8;
+                max-height: 160px;
             }
             .sketch-frame {
                 padding: 1rem;
@@ -404,6 +459,7 @@
             <li><a href="#about">About</a></li>
             <li><a href="#skills">Skills</a></li>
             <li><a href="#experience">Experience</a></li>
+            <li><a href="#featured-project">Featured Work</a></li>
             <li><a href="#projects">Projects</a></li>
             <li><a href="#sketches">Sketches</a></li>
             <li><a href="#music">Music</a></li>
@@ -418,9 +474,9 @@
 
     <!-- HERO -->
     <section id="hero">
-        <div class="hero-tag">Full Stack Engineer</div>
+        <div class="hero-tag">Software Engineer</div>
         <h1 class="hero-name">Yash Kumar<br>Arya</h1>
-        <p class="hero-subtitle">Backend · React Native · AI Integrations</p>
+        <p class="hero-subtitle">I build real-time systems and AI-powered applications</p>
         <div class="hero-cta">
             <a href="#experience" class="btn-primary">View Work</a>
             <a href="#contact" class="btn-outline">Get in Touch</a>
@@ -436,9 +492,9 @@
                     <h2 class="section-title">Who I Am</h2>
                 </div>
                 <div class="about-text">
-                    <p>Backend engineer specialising in real-time, event-driven distributed systems, microservices, and high-throughput data pipelines.</p>
-                    <p>Experienced with Node.js, TypeScript, RabbitMQ, ClickHouse, and Docker. Strong understanding of networking, observability, and scalable schema design.</p>
-                    <p>Complemented by full-stack expertise with React Native, MobX, TanStack Query, and complex clinical workflow orchestration.</p>
+                    <p>I'm a backend engineer who gets excited about building systems that work under pressure. I design distributed architectures that handle real-time data at scale and create AI integrations that solve actual problems.</p>
+                    <p>The problems I love solving? Event-driven microservices that need to process thousands of alerts per second, mobile apps that work offline, and turning messy voice recordings into structured medical data.</p>
+                    <p>When I'm not debugging distributed systems, you'll find me sketching ideas or playing guitar. I believe creativity shapes better product thinking — whether I'm designing a database schema or composing a song, it's all about finding the right patterns.</p>
                 </div>
             </div>
             <div class="about-stats">
@@ -458,39 +514,27 @@
                 <h2 class="section-title">Technical Stack</h2>
             </div>
             <div class="skill-category">
-                <div class="skill-cat-title">Languages</div>
+                <div class="skill-cat-title">Backend & Distributed Systems</div>
                 <div class="skill-tags">
-                    <span class="tag">Python</span><span class="tag">JavaScript</span><span class="tag">TypeScript</span><span class="tag">FastAPI</span><span class="tag">Django (learning)</span>
+                    <span class="tag">Node.js</span><span class="tag">TypeScript</span><span class="tag">RabbitMQ</span><span class="tag">ClickHouse</span><span class="tag">Docker</span>
                 </div>
             </div>
             <div class="skill-category">
-                <div class="skill-cat-title">Frontend & Mobile</div>
+                <div class="skill-cat-title">Mobile & Frontend</div>
                 <div class="skill-tags">
-                    <span class="tag">React</span><span class="tag">React Native</span><span class="tag">Expo</span><span class="tag">HTML / CSS</span><span class="tag">NativeWind</span><span class="tag">TailwindCSS</span><span class="tag">Styled Components</span><span class="tag">Figma</span>
+                    <span class="tag">React Native</span><span class="tag">Expo</span><span class="tag">MobX</span><span class="tag">TanStack Query</span>
                 </div>
             </div>
             <div class="skill-category">
-                <div class="skill-cat-title">Backend & APIs</div>
+                <div class="skill-cat-title">AI / ML Integration</div>
                 <div class="skill-tags">
-                    <span class="tag">Node.js</span><span class="tag">REST APIs</span><span class="tag">RabbitMQ</span><span class="tag">OpenAI Whisper</span><span class="tag">Mistral</span><span class="tag">OpenRouter</span>
+                    <span class="tag">OpenAI Whisper</span><span class="tag">FastAPI</span><span class="tag">Python</span><span class="tag">Mistral</span>
                 </div>
             </div>
             <div class="skill-category">
-                <div class="skill-cat-title">Databases</div>
+                <div class="skill-cat-title">DevOps & Infrastructure</div>
                 <div class="skill-tags">
-                    <span class="tag">ClickHouse (MergeTree / TTL)</span><span class="tag">MySQL</span><span class="tag">MongoDB</span>
-                </div>
-            </div>
-            <div class="skill-category">
-                <div class="skill-cat-title">State Management</div>
-                <div class="skill-tags">
-                    <span class="tag">MobX</span><span class="tag">TanStack Query</span><span class="tag">React Hooks</span><span class="tag">Context API</span>
-                </div>
-            </div>
-            <div class="skill-category">
-                <div class="skill-cat-title">DevOps & Networking</div>
-                <div class="skill-tags">
-                    <span class="tag">Docker</span><span class="tag">Linux Server Management</span><span class="tag">Git / GitHub</span><span class="tag">TCP/IP</span><span class="tag">WebSockets</span><span class="tag">DNS / TLS</span><span class="tag">Azure IoT</span>
+                    <span class="tag">Linux Server Management</span><span class="tag">TCP/IP</span><span class="tag">Azure IoT</span><span class="tag">Git</span>
                 </div>
             </div>
         </div>
@@ -548,43 +592,76 @@
         </div>
     </section>
 
+    <!-- FEATURED PROJECT -->
+    <section id="featured-project" class="glass-section">
+        <div class="featured-inner">
+            <div class="section-header">
+                <p class="section-label">04 — Featured Work</p>
+                <h2 class="section-title">AI Clinical Assistant</h2>
+            </div>
+            <div class="featured-content">
+                <div class="featured-problem">
+                    <h3>The Problem</h3>
+                    <p>Doctors spend 40% of their time on documentation instead of patient care. Voice recordings contain rich clinical data, but extracting structured information manually is slow and error-prone.</p>
+                </div>
+                <div class="featured-solution">
+                    <h3>My Solution</h3>
+                    <p>Built an AI-powered pipeline that converts voice recordings into structured clinical notes using OpenAI Whisper for transcription and custom NLP models for medical data extraction. The system automatically populates patient forms and generates SOAP notes.</p>
+                </div>
+                <div class="featured-tech">
+                    <h3>Tech Stack</h3>
+                    <div class="tech-grid">
+                        <span class="tech-tag">OpenAI Whisper</span>
+                        <span class="tech-tag">FastAPI</span>
+                        <span class="tech-tag">React Native</span>
+                        <span class="tech-tag">Node.js</span>
+                        <span class="tech-tag">MobX</span>
+                        <span class="tech-tag">TanStack Query</span>
+                    </div>
+                </div>
+                <div class="featured-result">
+                    <h3>Impact</h3>
+                    <p>Reduced clinical documentation time by 60% and improved data accuracy. Currently deployed in production with real healthcare workflows processing 200+ voice notes daily.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- PROJECTS -->
     <section id="projects" class="glass-section">
         <div class="projects-inner">
             <div class="section-header">
-                <p class="section-label">04 — Projects</p>
-                <h2 class="section-title">Things I've Built</h2>
+                <p class="section-label">05 — Projects</p>
+                <h2 class="section-title">More Things I've Built</h2>
             </div>
             <div class="projects-grid">
                 <a href="https://shivservices.com" target="_blank" rel="noopener noreferrer" class="project-card" style="text-decoration: none; color: inherit;">
                     <div class="project-icon">🛡️</div>
                     <div class="project-name">Shiv Security Services</div>
-                    <div class="project-desc">Professional business website for a security services company in Moradabad. Features service listings, client showcases, career portal, and contact forms.</div>
-                    <div class="project-stack"><span class="stack-tag">HTML</span><span class="stack-tag">CSS</span><span class="stack-tag">JavaScript</span><span class="stack-tag">Responsive Design</span></div>
+                    <div class="project-problem">Professional business presence for a growing security company in Moradabad.</div>
+                    <div class="project-solution">Built a complete business website with service showcases, client portfolio, and career portal.</div>
+                    <div class="project-stack"><span class="stack-tag">HTML</span><span class="stack-tag">CSS</span><span class="stack-tag">JavaScript</span></div>
                 </a>
                 <div class="project-card">
                     <div class="project-icon">🧠</div>
                     <div class="project-name">Mental Health Therapist Chatbot</div>
-                    <div class="project-desc">NLP-based chatbot providing mental health support with sentiment analysis to detect emotions and give personalised advice.</div>
-                    <div class="project-stack"><span class="stack-tag">Python</span><span class="stack-tag">TensorFlow</span><span class="stack-tag">Keras</span><span class="stack-tag">NLP</span></div>
+                    <div class="project-problem">Mental health support needs to be accessible 24/7 with personalized responses.</div>
+                    <div class="project-solution">Built an NLP-based chatbot that analyzes sentiment and responds with context-aware support.</div>
+                    <div class="project-stack"><span class="stack-tag">Python</span><span class="stack-tag">TensorFlow</span><span class="stack-tag">NLP</span></div>
                 </div>
                 <div class="project-card">
                     <div class="project-icon">👁️</div>
                     <div class="project-name">Driver Drowsiness Detection</div>
-                    <div class="project-desc">Real-time system detecting driver fatigue using EAR/MAR-based predictions and facial landmark detection to enhance road safety.</div>
-                    <div class="project-stack"><span class="stack-tag">Python</span><span class="stack-tag">OpenCV</span><span class="stack-tag">Dlib</span><span class="stack-tag">Computer Vision</span></div>
+                    <div class="project-problem">Drowsy driving causes 100,000 crashes annually, but detection systems are expensive.</div>
+                    <div class="project-solution">Real-time system using EAR/MAR predictions and facial landmark detection to prevent accidents.</div>
+                    <div class="project-stack"><span class="stack-tag">Python</span><span class="stack-tag">OpenCV</span><span class="stack-tag">Computer Vision</span></div>
                 </div>
                 <div class="project-card">
                     <div class="project-icon">🏠</div>
                     <div class="project-name">Real Estate Pro</div>
-                    <div class="project-desc">Full-stack mobile realty listing app — browse, add, and manage real estate listings on the go with a sleek cross-platform UI.</div>
-                    <div class="project-stack"><span class="stack-tag">React Native</span><span class="stack-tag">TypeScript</span><span class="stack-tag">Node.js</span><span class="stack-tag">NativeWind</span></div>
-                </div>
-                <div class="project-card">
-                    <div class="project-icon">📚</div>
-                    <div class="project-name">Book Share</div>
-                    <div class="project-desc">Community-driven reading app with keep-alive automation via a 14-min cron ping. Stores books with title, author, thoughts, and timestamps.</div>
-                    <div class="project-stack"><span class="stack-tag">Expo</span><span class="stack-tag">React Native</span><span class="stack-tag">Node.js</span><span class="stack-tag">MongoDB</span></div>
+                    <div class="project-problem">Real estate agents needed a mobile-first platform for property management.</div>
+                    <div class="project-solution">Cross-platform mobile app for browsing, adding, and managing real estate listings on the go.</div>
+                    <div class="project-stack"><span class="stack-tag">React Native</span><span class="stack-tag">TypeScript</span><span class="stack-tag">Node.js</span></div>
                 </div>
             </div>
         </div>
@@ -594,8 +671,9 @@
     <section id="sketches" class="glass-section">
         <div class="sketches-inner">
             <div class="section-header">
-                <p class="section-label">05 — Art</p>
+                <p class="section-label">06 — Art</p>
                 <h2 class="section-title">Creative Sketches</h2>
+                <p style="color:var(--muted);font-size:0.9rem;margin-top:1rem;">Ideas flow better when I draw them first. These sketches capture moments of inspiration and help me think through complex problems visually.</p>
             </div>
             <div class="sketches-gallery">
                 <div class="sketch-item">
@@ -638,8 +716,9 @@
     <section id="music" class="glass-section">
         <div class="music-inner">
             <div class="section-header">
-                <p class="section-label">06 — Music</p>
+                <p class="section-label">07 — Music</p>
                 <h2 class="section-title">Guitar & Vocals</h2>
+                <p style="color:var(--muted);font-size:0.9rem;margin-top:1rem;">Music teaches me about patterns, timing, and harmony — the same principles I apply when architecting software systems.</p>
             </div>
             <div class="music-gallery">
                 <a href="https://www.youtube.com/shorts/2uPPZIZFm00" target="_blank" rel="noopener noreferrer" class="video-card">
@@ -680,14 +759,18 @@
     <section id="contact" class="glass-section">
         <div class="contact-inner">
             <div class="section-header">
-                <p class="section-label">07 — Contact</p>
+                <p class="section-label">08 — Contact</p>
                 <h2 class="section-title">Let's Connect</h2>
             </div>
-            <p style="color:var(--muted);font-size:0.95rem;line-height:1.7;margin-top:-2rem;">Open to new opportunities, collaborations, and interesting conversations.</p>
+            <p style="color:var(--muted);font-size:0.95rem;line-height:1.7;margin-top:-2rem;">If you're building something meaningful, I'd love to be part of it.</p>
             <div class="contact-grid">
                 <a href="tel:+919410472264" class="contact-item">
                     <div class="contact-icon">📞</div>
                     <div><div class="contact-label">Phone</div><div class="contact-value">+91 9410472264</div></div>
+                </a>
+                <a href="https://wa.me/919410472264" target="_blank" rel="noopener noreferrer" class="contact-item">
+                    <div class="contact-icon">💬</div>
+                    <div><div class="contact-label">WhatsApp</div><div class="contact-value">Message me</div></div>
                 </a>
                 <a href="mailto:yashkmr694@gmail.com" class="contact-item">
                     <div class="contact-icon">✉️</div>
@@ -708,7 +791,6 @@
     <!-- Footer -->
     <footer>
         <p>© 2026 Yash Kumar Arya</p>
-        <p>Built with Three.js + GSAP</p>
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" crossorigin="anonymous"></script>
