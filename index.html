@@ -1108,10 +1108,56 @@
             // Gentle floating bob
             gsap.to(starship.position, { y: 0.5, duration: 2.4, ease: 'sine.inOut', yoyo: true, repeat: -1 });
 
-            // Show starship when 30% scroll is done
-            new IntersectionObserver((entries) => {
-                starship.visible = !entries[0].isIntersecting;
-            }, { threshold: 0.6 }).observe(document.getElementById('hero')); // 0.7 means starship shows when 30% scrolled
+            // Starship ghostly appear/disappear at 50% hero scroll
+            let starshipRevealed = false;
+            let starshipFading = false;
+            
+            // Make materials transparent-ready
+            starship.traverse(child => {
+                if (child.isMesh && child.material) {
+                    child.material.transparent = true;
+                    child.material.opacity = 0;
+                }
+            });
+
+            window.addEventListener('scroll', () => {
+                const heroHeight = document.getElementById('hero').offsetHeight;
+                const scrollY = window.scrollY;
+                const scrollPercent = scrollY / heroHeight;
+
+                if (scrollPercent >= 0.5 && !starshipRevealed) {
+                    // Scrolled past 50% of hero — fade in
+                    starshipRevealed = true;
+                    starshipFading = false;
+                    starship.visible = true;
+                    starship.traverse(child => {
+                        if (child.isMesh && child.material) {
+                            gsap.killTweensOf(child.material);
+                            gsap.to(child.material, {
+                                opacity: 1, duration: 2.5, ease: 'power1.inOut'
+                            });
+                        }
+                    });
+                } else if (scrollPercent < 0.5 && starshipRevealed) {
+                    // Scrolled back above 50% — fade out
+                    starshipRevealed = false;
+                    starshipFading = true;
+                    starship.traverse(child => {
+                        if (child.isMesh && child.material) {
+                            gsap.killTweensOf(child.material);
+                            gsap.to(child.material, {
+                                opacity: 0, duration: 1.5, ease: 'power1.inOut',
+                                onComplete: () => {
+                                    if (starshipFading) {
+                                        starship.visible = false;
+                                        starshipFading = false;
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            }, { passive: true });
         }
 
         let animationPaused = false;
