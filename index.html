@@ -193,39 +193,63 @@
         .project-stack { display: flex; flex-wrap: wrap; gap: 0.4rem; }
         .stack-tag { font-family: 'Space Mono', monospace; font-size: 0.66rem; padding: 0.2rem 0.6rem; background: rgba(168,192,255,0.07); border: 1px solid rgba(168,192,255,0.18); border-radius: 4px; color: var(--accent); }
 
-        /* Sketches */
-        #sketches { padding: 4rem 4rem; }
-        .sketches-inner { max-width: 1200px; margin: 0 auto; }
-        .sketches-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
-        .sketch-item { position: relative; }
+        /* Sketches — Horizontal Moving Slideshow */
+        #sketches { padding: 4rem 0; overflow: hidden; }
+        .sketches-inner { max-width: 100%; }
+        .sketches-inner .section-header { max-width: 1200px; margin: 0 auto; padding: 0 4rem; }
+        .slideshow-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            padding: 2rem 0;
+            mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+        }
+        .slideshow-track {
+            display: flex;
+            gap: 2rem;
+            width: max-content;
+            animation: scrollSlideshow 25s linear infinite;
+        }
+        .slideshow-track:hover {
+            animation-play-state: paused;
+        }
+        @keyframes scrollSlideshow {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .sketch-slide {
+            flex-shrink: 0;
+            width: 350px;
+        }
         .sketch-frame { 
             position: relative; 
             background: var(--bg3); 
             border: 1px solid var(--border); 
             border-radius: 16px; 
-            padding: 1.5rem; 
+            padding: 1rem; 
             transition: all 0.3s ease;
             overflow: hidden;
         }
         .sketch-frame:hover { 
             border-color: rgba(168,192,255,0.4); 
-            transform: translateY(-8px);
             box-shadow: 0 20px 40px rgba(168,192,255,0.15);
+            transform: translateY(-4px);
         }
         .sketch-frame img { 
             width: 100%; 
-            height: 280px; 
+            height: 400px; 
             object-fit: cover; 
             border-radius: 8px;
             transition: transform 0.3s ease;
         }
         .sketch-overlay {
             position: absolute;
-            top: 1.5rem;
-            left: 1.5rem;
-            right: 1.5rem;
-            bottom: 1.5rem;
-            background: rgba(0,0,0,0.8);
+            top: 1rem;
+            left: 1rem;
+            right: 1rem;
+            bottom: 1rem;
+            background: rgba(0,0,0,0.6);
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -381,12 +405,11 @@
             .about-grid { grid-template-columns: 1fr; gap: 2rem; }
             #about, #skills, #experience, #featured-project, #projects, #sketches, #music, #contact { padding: 3rem 1.5rem; }
             .featured-content { grid-template-columns: 1fr; gap: 1.5rem; }
-            .sketches-gallery { 
-                grid-template-columns: 1fr; 
-                gap: 1.5rem; 
-            }
             .sketch-frame img { 
-                height: 240px; /* Slightly smaller on mobile */
+                height: 280px;
+            }
+            .sketch-slide {
+                width: 280px;
             }
             .music-gallery { 
                 grid-template-columns: 1fr; 
@@ -430,11 +453,15 @@
                 max-height: 160px;
             }
             .sketch-frame {
-                padding: 1rem;
+                padding: 0.75rem;
             }
             .sketch-frame img {
-                height: 200px;
+                height: 240px;
             }
+            .sketch-slide {
+                width: 250px;
+            }
+            .sketches-inner .section-header { padding: 0 1.5rem; }
             .hero-name {
                 font-size: 2.5rem;
             }
@@ -675,36 +702,72 @@
                 <h2 class="section-title">Creative Sketches</h2>
                 <p style="color:var(--muted);font-size:0.9rem;margin-top:1rem;">Ideas flow better when I draw them first. These sketches capture moments of inspiration and help me think through complex problems visually.</p>
             </div>
-            <div class="sketches-gallery">
-                <div class="sketch-item">
-                    <div class="sketch-frame">
-                        <img src="IMG_2980.PNG" alt="Creative Sketch 1" loading="lazy">
-                        <div class="sketch-overlay">
-                            <div class="sketch-zoom">🔍</div>
+            <div class="slideshow-container">
+                <div class="slideshow-track" id="sketchTrack">
+                    <!-- First set -->
+                    <div class="sketch-slide">
+                        <div class="sketch-frame">
+                            <img src="IMG_2980.PNG" alt="Creative Sketch 1" loading="lazy">
+                            <div class="sketch-overlay">
+                                <div class="sketch-zoom">🔍</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="sketch-item">
-                    <div class="sketch-frame">
-                        <img src="IMG_2981.PNG" alt="Creative Sketch 2" loading="lazy">
-                        <div class="sketch-overlay">
-                            <div class="sketch-zoom">🔍</div>
+                    <div class="sketch-slide">
+                        <div class="sketch-frame">
+                            <img src="IMG_2981.PNG" alt="Creative Sketch 2" loading="lazy">
+                            <div class="sketch-overlay">
+                                <div class="sketch-zoom">🔍</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="sketch-item">
-                    <div class="sketch-frame">
-                        <img src="IMG_2982.PNG" alt="Creative Sketch 3" loading="lazy">
-                        <div class="sketch-overlay">
-                            <div class="sketch-zoom">🔍</div>
+                    <div class="sketch-slide">
+                        <div class="sketch-frame">
+                            <img src="IMG_2982.PNG" alt="Creative Sketch 3" loading="lazy">
+                            <div class="sketch-overlay">
+                                <div class="sketch-zoom">🔍</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="sketch-item">
-                    <div class="sketch-frame">
-                        <img src="IMG_2983.PNG" alt="Creative Sketch 4" loading="lazy">
-                        <div class="sketch-overlay">
-                            <div class="sketch-zoom">🔍</div>
+                    <div class="sketch-slide">
+                        <div class="sketch-frame">
+                            <img src="IMG_2983.PNG" alt="Creative Sketch 4" loading="lazy">
+                            <div class="sketch-overlay">
+                                <div class="sketch-zoom">🔍</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Duplicate set for seamless loop -->
+                    <div class="sketch-slide">
+                        <div class="sketch-frame">
+                            <img src="IMG_2980.PNG" alt="Creative Sketch 1" loading="lazy">
+                            <div class="sketch-overlay">
+                                <div class="sketch-zoom">🔍</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sketch-slide">
+                        <div class="sketch-frame">
+                            <img src="IMG_2981.PNG" alt="Creative Sketch 2" loading="lazy">
+                            <div class="sketch-overlay">
+                                <div class="sketch-zoom">🔍</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sketch-slide">
+                        <div class="sketch-frame">
+                            <img src="IMG_2982.PNG" alt="Creative Sketch 3" loading="lazy">
+                            <div class="sketch-overlay">
+                                <div class="sketch-zoom">🔍</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sketch-slide">
+                        <div class="sketch-frame">
+                            <img src="IMG_2983.PNG" alt="Creative Sketch 4" loading="lazy">
+                            <div class="sketch-overlay">
+                                <div class="sketch-zoom">🔍</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1124,14 +1187,11 @@
             });
         }
 
-        // Sketch gallery functionality
-        const sketchOverlays = document.querySelectorAll('.sketch-overlay');
-        
-        sketchOverlays.forEach(overlay => {
+        // Sketch lightbox (fullscreen view on click)
+        document.querySelectorAll('.sketch-overlay').forEach(overlay => {
             overlay.addEventListener('click', () => {
                 const img = overlay.parentElement.querySelector('img');
                 if (img) {
-                    // Create full-screen view
                     const fullscreen = document.createElement('div');
                     fullscreen.style.cssText = `
                         position: fixed;
@@ -1160,7 +1220,6 @@
                         animation: zoomIn 0.3s ease-out;
                     `;
                     
-                    // Add animation keyframes
                     const style = document.createElement('style');
                     style.textContent = `
                         @keyframes zoomIn {
@@ -1169,11 +1228,9 @@
                         }
                     `;
                     document.head.appendChild(style);
-                    
                     fullscreen.appendChild(fullImg);
                     document.body.appendChild(fullscreen);
                     
-                    // Close on click
                     fullscreen.addEventListener('click', () => {
                         document.body.removeChild(fullscreen);
                         document.head.removeChild(style);
